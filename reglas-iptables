@@ -1,0 +1,33 @@
+<Script scriptIptables.sh>
+#1Borrar reglas
+iptables -F
+iptables -Z
+#0 Permitir SSH
+
+IPTABLES -A INPUT -p tcp –sport 22 -s 172.22.x.x -j ACCEPT
+iptables -A OUTPUT -p tcp –dport 22 -d 172.22.x.x -j ACCEPT
+
+#2 Politica por defecto DROP
+iptables -P INPUT DROP
+iptables -P OUTPUT DROP
+IPTABLES -P FORDWARD DROP
+
+#3 Permitir PING pero no responder
+iptables -A OUTPUT -p icmp -d 172.22.x.x -j ACCEPT
+iptables -A INPUT -p icmp -s 172.22.x.x -j ACCEPT
+
+#4.1 DNS
+iptables -A OUTPUT -p udp –dport 53 -d 8.8.8.8 -j ACCEPT
+iptables -A INPUT -p udp –sport 53 -s 8.8.8.8 ACCEPT
+
+#4.2 HTTP
+iptables -A OUTPUT -p tcp –dport 80 -j ACCEPT
+iptables -A INPUT -p  tco --sport 80 -j ACCEPT
+
+#4.3 HTTPS
+iptables -A OUTPUT -p tcp --dport 443 -j ACEPT
+iptables -A INPUT -p tcp --sport 443 -j ACCEPT
+
+#6 DHCP
+iptables -A OUTPUT -p udp --sport 68 --dport 67 -j ACCEPT
+iptables -A INPUT -p udp --sport 67 --dport 68 -j ACCEPT
